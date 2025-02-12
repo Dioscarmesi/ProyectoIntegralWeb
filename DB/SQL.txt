@@ -15,3 +15,19 @@ CREATE TABLE usuarios (
     fecha_nacimiento DATE NOT NULL,  -- Aquí se guarda la fecha de nacimiento
     admin BOOLEAN NOT NULL DEFAULT 0  -- Valor booleano para admin, por defecto 0 (no es admin)
 );
+
+CREATE TABLE productos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    precio DECIMAL(10, 2) NOT NULL,
+    descripcion TEXT,
+    estrellas INT NOT NULL CHECK (estrellas BETWEEN 1 AND 5),
+    cantidad INT DEFAULT NULL
+);
+
+CREATE TABLE imagenes_productos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    producto_id INT,
+    imagen VARCHAR(255),
+    FOREIGN KEY (producto_id) REFERENCES productos(id)
+);
