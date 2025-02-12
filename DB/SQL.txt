@@ -1,0 +1,17 @@
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido_paterno VARCHAR(100) NOT NULL,
+    apellido_materno VARCHAR(100) NOT NULL,
+    usuario VARCHAR(50) NOT NULL UNIQUE,
+    pais VARCHAR(50) NOT NULL,
+    estado VARCHAR(50) NOT NULL,
+    ciudad VARCHAR(50) NOT NULL,
+    direccion1 VARCHAR(255) NOT NULL,
+    direccion2 VARCHAR(255),
+    codigo_postal VARCHAR(20) NOT NULL,
+    correo VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    fecha_nacimiento DATE NOT NULL,  -- Aquí se guarda la fecha de nacimiento
+    admin BOOLEAN NOT NULL DEFAULT 0  -- Valor booleano para admin, por defecto 0 (no es admin)
+);
