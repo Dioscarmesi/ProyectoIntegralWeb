@@ -1,0 +1,98 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+ 
+/* Banner */
+.banner {
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    font-size: 24px;
+}
+ 
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    background-color: #333;
+    padding: 10px;
+}
+ 
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+}
+ 
+.search-container {
+    display: flex;
+}
+ 
+.search-container input {
+    padding: 5px;
+    margin-right: 5px;
+}
+ 
+/* Productos */
+.productos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+ 
+.producto {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+}
+ 
+.producto img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+ 
+.producto button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+ 
+.producto button:hover {
+    transform: scale(1.1);
+}
+ 
+/* Login */
+.login-container {
+    display: flex;
+    justify-content: center;
+    padding: 50px;
+}
+ 
+.form-box {
+    background: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+}
+ 
+.hidden {
+    display: none;
+}
+ 
+/* Footer */
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #555;
+    color: white;
+    padding: 10px;
+}
