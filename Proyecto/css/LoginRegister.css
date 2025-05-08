@@ -1,0 +1,170 @@
+/* css/LoginRegister.css */
+
+/* Tipografías */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@300;400&display=swap');
+
+/* Variables de paleta */
+:root {
+  --bg-dark:     #111;
+  --bg-section:  #1a1a1a;
+  --accent:      #e63946;
+  --text-light:  #f5f5f5;
+  --input-bg:    #222;
+  --input-border:#333;
+  --radius:      6px;
+}
+
+/* Reset básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Body centrado */
+body.login,
+body.register {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--bg-dark);
+  font-family: var(--font-body, 'Roboto', sans-serif);
+  color: var(--text-light);
+}
+
+/* Contenedor principal */
+.login-wrapper {
+  display: flex;
+  width: 90%;
+  max-width: 800px;
+  background: var(--bg-section);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+/* Panel promocional */
+.login-promo {
+  flex: 1;
+  background: linear-gradient(135deg, var(--accent) 0%, #b22d3a 100%);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.login-promo h2 {
+  font-family: var(--font-heading, 'Oswald'), sans-serif;
+  font-size: 3rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+.login-promo p {
+  font-size: 1.25rem;
+  color: #fff;
+  margin-bottom: 1.5rem;
+}
+.login-promo .coupon-code {
+  background: #fff;
+  color: var(--accent);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* Panel de formulario */
+.login-form-container {
+  flex: 1;
+  background: var(--bg-section);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.login-form-container h2 {
+  font-family: var(--font-heading, 'Oswald'), sans-serif;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: var(--text-light);
+}
+.login-form-container .form-error {
+  background: #8b0000;
+  color: #fff;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* Formulario */
+.login-form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.login-form-container label {
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+.login-form-container input {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-light);
+  font-size: 1rem;
+}
+.login-form-container input::placeholder {
+  color: var(--text-light);
+  opacity: 0.7;
+}
+.login-form-container button {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-heading, 'Oswald'), sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.login-form-container button:hover {
+  opacity: 0.9;
+}
+
+/* Link de registro/olvido */
+.login-form-container .register-link {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+.login-form-container .register-link a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: bold;
+}
+.login-form-container .register-link a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .login-wrapper {
+    flex-direction: column;
+  }
+  .login-promo {
+    padding: 1.5rem;
+  }
+  .login-form-container {
+    padding: 1.5rem;
+  }
+}

@@ -1,0 +1,97 @@
+/* /UrbanJ/css/VisualizarProducto.css */
+
+.vp-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    color: #f5f5f5;
+  }
+  .vp-producto {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .vp-imagenes {
+    flex: 1 1 400px;
+  }
+  .vp-imagenes #vp-main-img {
+    width: 100%;
+    border-radius: 6px;
+  }
+  .vp-thumb-wrapper {
+    margin-top: 1rem;
+    display: flex;
+    gap: .5rem;
+  }
+  .vp-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: .7;
+    transition: opacity .2s;
+  }
+  .vp-thumb:hover,
+  .vp-thumb.active {
+    opacity: 1;
+  }
+  .vp-info {
+    flex: 1 1 300px;
+  }
+  .vp-info h1 {
+    font-family: 'Oswald',sans-serif;
+    margin-bottom: .5rem;
+  }
+  .vp-precio {
+    font-size: 1.5rem;
+    color: #e63946;
+    margin-bottom: 1rem;
+  }
+  .vp-desc {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+  .vp-meta {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+  .vp-meta li {
+    margin-bottom: .3rem;
+  }
+  .vp-acciones .btn {
+    margin-right: .5rem;
+  }
+  
+  /* Reseñas */
+  .vp-reseñas {
+    margin-top: 3rem;
+  }
+  .vp-reseñas h2 {
+    font-family: 'Oswald',sans-serif;
+    margin-bottom: 1rem;
+  }
+  .reseña {
+    background: #222;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+  .r-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .5rem;
+  }
+  .r-user {
+    font-weight: bold;
+  }
+  .r-stars {
+    color: #e63946;
+    font-size: 1rem;
+  }
+  .r-text {
+    line-height: 1.5;
+  }
+  

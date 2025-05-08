@@ -1,0 +1,117 @@
+:root {
+    --bg-dark:     #111;
+    --bg-section:  #1a1a1a;
+    --header-bg:   #222;
+    --text-light:  #f5f5f5;
+    --accent:      #e63946;
+    --danger:      #e63946;
+    --success:     #4caf50;
+    --info:        #1e90ff;
+    --border:      #333;
+    --radius:      6px;
+  }
+  
+  .productos-table-container {
+    padding: 2rem;
+    background: var(--bg-dark);
+    color: var(--text-light);
+  }
+  .nuevo-btn {
+    display: inline-block;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-family: 'Oswald', sans-serif;
+  }
+  .productos-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .productos-table th,
+  .productos-table td {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  .productos-table th {
+    background: var(--header-bg);
+  }
+  .productos-table tr:nth-child(even) {
+    background: var(--bg-section);
+  }
+  .btn-action {
+    margin-right: 0.25rem;
+    padding: 0.3rem 0.6rem;
+    border: none;
+    border-radius: var(--radius);
+    color: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .btn-edit   { background: var(--success); }
+  .btn-delete { background: var(--danger);  }
+  .btn-view   { background: var(--info);    }
+  
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  .modal {
+    background: var(--bg-section);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    color: var(--text-light);
+  }
+  .modal-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-light);
+    cursor: pointer;
+  }
+  
+  /* Carrusel de miniaturas */
+  #modal-images {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
+  }
+  #modal-images img {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+  #modal-images img.active {
+    border-color: var(--accent);
+  }
+  
+  /* Scrollbar */
+  #modal-images::-webkit-scrollbar {
+    height: 6px;
+  }
+  #modal-images::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+  }
+  
