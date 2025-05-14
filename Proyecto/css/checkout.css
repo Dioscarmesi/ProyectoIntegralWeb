@@ -1,0 +1,141 @@
+/* Checkout.css */
+
+.checkout-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    color: var(--text);
+    font-family: var(--font-b);
+  }
+  
+  .checkout-container h1 {
+    margin-bottom: 1.5rem;
+    font-family: var(--font-h);
+    font-size: 2rem;
+    color: var(--accent);
+  }
+  
+  .step {
+    margin-bottom: 2rem;
+  }
+  
+  .step h2 {
+    font-size: 1.5rem;
+    margin-bottom: .75rem;
+    color: var(--text);
+  }
+  
+  .step p,
+  .step li {
+    line-height: 1.4;
+    margin-bottom: .5rem;
+  }
+  
+  .step button,
+  .step input,
+  .step select {
+    font-family: var(--font-b);
+  }
+  
+  .address-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .address-item {
+    background: var(--section);
+    border-radius: 6px;
+    padding: .75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .5rem;
+  }
+  
+  .address-item span {
+    flex: 1;
+  }
+  
+  .address-item button {
+    margin-left: .5rem;
+    padding: .4rem .8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .btn-add-address {
+    background: var(--accent);
+    color: #fff;
+    padding: .5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+  
+  .address-form {
+    background: var(--section);
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 2rem;
+  }
+  
+  .address-form label {
+    display: block;
+    margin-bottom: .25rem;
+    font-size: .9rem;
+  }
+  
+  .address-form input {
+    width: 100%;
+    padding: .5rem;
+    margin-bottom: .75rem;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--text);
+  }
+  
+  .summary-list {
+    list-style: disc inside;
+    margin-bottom: 1rem;
+  }
+  
+  .summary-list li {
+    margin-bottom: .5rem;
+  }
+  
+  .checkout-total {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    text-align: right;
+  }
+  
+  .btn-pay {
+    display: block;
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    text-align: center;
+    padding: .75rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0.7;
+    pointer-events: none;
+    transition: opacity .2s;
+  }
+  
+  .btn-pay.enabled {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .btn-pay:hover.enabled {
+    background: darken(var(--accent), 5%);
+  }
+  

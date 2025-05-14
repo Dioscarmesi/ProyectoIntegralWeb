@@ -1,95 +1,94 @@
-/* Paleta y variables heredadas */
+/* /UrbanJ/css/Home.css */
 
 /* Contenedor principal */
 .home-container {
-    margin-top: 1rem;
-  }
-  
-  /* Banner Carrusel */
-  .home-banner {
-    margin-bottom: 2rem;
-  }
-  .carousel {
-    display: flex;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    gap: 1rem;
-  }
-  .carousel::-webkit-scrollbar {
-    display: none;
-  }
-  .banner-slide img {
-    width: 100%;
-    border-radius: var(--radius);
-    object-fit: cover;
-  }
-  
-  /* Secciones de Productos */
-  .home-section {
-    margin-bottom: 3rem;
-  }
-  .home-section h2 {
-    font-family: var(--font-heading);
-    font-size: 2rem;
-    color: var(--accent);
-    margin-bottom: 1rem;
-  }
+  margin-top: 1rem;
+}
+
+/* Banner Carrusel */
+.home-banner {
+  margin-bottom: 2rem;
+}
+.carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 1rem;
+}
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+.banner-slide img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* Secciones de Productos */
+.home-section {
+  margin-bottom: 3rem;
+}
+.home-section h2 {
+  font-family: var(--font-h);
+  font-size: 2rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+.productos-carousel {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+}
+.productos-carousel::-webkit-scrollbar {
+  display: none;
+}
+.producto-slide {
+  background: var(--section);
+  border-radius: 8px;
+  padding: 1rem;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.prod-link {
+  text-decoration: none;
+  color: inherit;
+}
+.prod-link img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.prod-link h4 {
+  font-size: 1rem;
+  margin: .5rem 0;
+  font-weight: 500;
+}
+.prod-link .precio {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* Botones en slides */
+.producto-slide .acciones {
+  display: flex;
+  gap: .5rem;
+  margin-top: .5rem;
+}
+.btn--small {
+  flex: 1;
+  padding: .4rem .8rem;
+  font-size: .85rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
   .productos-carousel {
-    display: flex;
-    overflow-x: auto;
-    gap: 1rem;
-  }
-  .productos-carousel::-webkit-scrollbar {
-    display: none;
+    gap: .5rem;
   }
   .producto-slide {
-    background: var(--section);
-    border-radius: var(--radius);
-    padding: 1rem;
-    min-width: 180px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    min-width: 140px;
   }
-  .prod-link {
-    text-decoration: none;
-    color: inherit;
-  }
-  .prod-link img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 4px;
-  }
-  .prod-link h4 {
-    font-size: 1rem;
-    margin: .5rem 0;
-    font-weight: 500;
-  }
-  .prod-link .precio {
-    color: var(--accent);
-    font-weight: bold;
-  }
-  
-  /* Botones en slides */
-  .producto-slide .acciones {
-    display: flex;
-    gap: .5rem;
-    margin-top: .5rem;
-  }
-  .btn--small {
-    flex: 1;
-    padding: .4rem .8rem;
-    font-size: .85rem;
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .productos-carousel {
-      gap: .5rem;
-    }
-    .producto-slide {
-      min-width: 140px;
-    }
-  }
-  
+}

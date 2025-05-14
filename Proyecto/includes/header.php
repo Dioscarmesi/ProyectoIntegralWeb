@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Conexión a la base de datos
-require __DIR__ . '/conexion.php';
+require_once __DIR__ . '/conexion.php';
 
 /**
  * Obtiene el carrito desde la sesión y devuelve
@@ -19,7 +19,7 @@ function getCartData(PDO $pdo): array {
     $totalQty = 0;
     $totalCost = 0.0;
 
-    if ($cart) {
+    if (!empty($cart)) {
         $ids = array_keys($cart);
         $in  = str_repeat('?,', count($ids) - 1) . '?';
         $stmt = $pdo->prepare("SELECT id, nombre, precio FROM productos WHERE id IN ($in)");
@@ -50,26 +50,19 @@ $cartData = getCartData($pdo);
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= htmlspecialchars($pageTitle ?? 'UrbanJ') ?></title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-
-  <!-- Estilos globales y de Home -->
-  <link rel="stylesheet" href="/UrbanJ/css/styles.css">
-  <link rel="stylesheet" href="/UrbanJ/css/Home.css">
-
-  <!-- Scripts globales -->
-  <script defer src="/UrbanJ/js/script.js"></script>
-  <script defer src="/UrbanJ/js/Home.js"></script>
-  <script defer src="/UrbanJ/js/cart.js"></script>
+  <?php
+    // Incluimos aquí todos los CSS/JS globales y por página
+    require __DIR__ . '/Stylos.php';
+  ?>
 </head>
 <body>
   <header class="header">
-    <div class="banner container"><h1>UrbanJ</h1></div>
     <nav class="nav container">
       <a href="/UrbanJ/index.php" class="nav__logo">UrbanJ</a>
+
       <ul class="nav__links">
         <li><a href="/UrbanJ/gorras.php">Gorras</a></li>
         <li><a href="/UrbanJ/ropa.php">Ropa</a></li>
@@ -79,13 +72,15 @@ $cartData = getCartData($pdo);
           <li><a href="/UrbanJ/inventario.php">Inventario</a></li>
         <?php endif; ?>
       </ul>
+
       <div class="nav__actions">
         <div class="search-container">
           <input type="text" id="search-box" placeholder="Buscar productos…">
           <button onclick="buscarProducto()">Buscar</button>
         </div>
+
         <div class="nav__user">
-          <button class="nav__icon btn--icon">👤</button>
+          <button class="btn--icon">👤</button>
           <div class="nav__dropdown">
             <?php if (!empty($_SESSION['user_id'])): ?>
               <a href="/UrbanJ/SesionIniciada.php">Mi cuenta</a>
@@ -96,8 +91,9 @@ $cartData = getCartData($pdo);
             <?php endif; ?>
           </div>
         </div>
+
         <div class="nav__cart">
-          <button id="cart-btn" class="nav__icon btn--icon" aria-label="Carrito">
+          <button id="cart-btn" class="btn--icon" aria-label="Carrito">
             🛒<span class="nav__badge"><?= $cartData['totalQty'] ?></span>
           </button>
           <div id="cart-dropdown" class="cart-dropdown">
@@ -118,9 +114,11 @@ $cartData = getCartData($pdo);
             <?php endif; ?>
           </div>
         </div>
+
         <button class="nav__toggle btn--icon">☰</button>
       </div>
     </nav>
+
     <div class="nav__mobile-menu">
       <ul>
         <li><a href="/UrbanJ/gorras.php">Gorras</a></li>
@@ -140,4 +138,5 @@ $cartData = getCartData($pdo);
       </ul>
     </div>
   </header>
-  <main>
+
+  <main class="container">

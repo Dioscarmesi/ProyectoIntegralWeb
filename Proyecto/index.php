@@ -1,56 +1,147 @@
 <?php
 // /UrbanJ/index.php
 
-require __DIR__ . '/includes/conexion.php';
+// Título de la página
 $pageTitle = 'Inicio';
-require __DIR__ . '/includes/header.php';
 
-// Obtener 6 productos por categoría
-$cats = ['Gorras','Ropa','Tasas','Camisas'];
-$carousels = [];
-foreach ($cats as $c) {
-    $stmt = $pdo->prepare("
-        SELECT p.id, p.nombre, p.precio,
-               ip.imagen_url
-          FROM productos p
-          LEFT JOIN imagenes_producto ip
-            ON p.id = ip.producto_id AND ip.orden = 1
-         WHERE p.categoria = ?
-         LIMIT 6
-    ");
-    $stmt->execute([$c]);
-    $carousels[$c] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Incluir cabecera (arranca sesión, conexión, <head> con styles.css y banner de navegación)
+require_once __DIR__ . '/includes/header.php';
+
+// 1) Obtener banners para el carrusel
+$stmt = $pdo->query("
+    SELECT imagen_url, enlace, texto_alt
+      FROM banners
+     ORDER BY orden
+");
+$banners = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// 2) Función para cargar 6 productos de una categoría
+function cargarProductos(PDO $pdo, string $categoria): array {
+    $sql = "
+        SELECT
+            p.id,
+            p.nombre,
+            p.precio,
+            (
+                SELECT imagen_url
+                  FROM imagenes_producto ip
+                 WHERE ip.producto_id = p.id
+                 ORDER BY orden
+                 LIMIT 1
+            ) AS img
+        FROM productos p
+       WHERE p.categoria = ?
+       LIMIT 6
+    ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$categoria]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// 3) Cargar secciones de productos
+$gorras  = cargarProductos($pdo, 'Gorras');
+$ropa    = cargarProductos($pdo, 'Ropa');
+$tasas   = cargarProductos($pdo, 'Tasas');
+$camisas = cargarProductos($pdo, 'Camisas');
 ?>
 
-<div class="home-container">
+<main class="home-container">
 
-  <?php foreach ($carousels as $cat => $items): ?>
-    <section class="home-section container">
-      <h2><?= htmlspecialchars($cat) ?></h2>
-      <div class="productos-carousel carousel">
-        <?php foreach ($items as $p): ?>
-          <div class="producto-slide">
-            <a href="/UrbanJ/VisualizarProducto.php?id=<?= $p['id'] ?>" class="prod-link">
-              <img src="/UrbanJ/<?= htmlspecialchars($p['imagen_url'] ?: 'assets/placeholder.png') ?>" alt="">
-              <h4><?= htmlspecialchars($p['nombre']) ?></h4>
-              <div class="precio">$<?= number_format($p['precio'],2) ?></div>
-            </a>
-            <div class="acciones">
-              <button class="btn btn--primary btn--small" onclick="comprar(<?= $p['id'] ?>)">
-                Comprar
-              </button>
-              <button class="btn btn--secondary btn--small" onclick="addToCart(<?= $p['id'] ?>)">
-                Añadir
-              </button>
-            </div>
+  <!-- Carrusel de banners -->
+  <section class="home-banner">
+    <div class="carousel">
+      <?php foreach ($banners as $b): ?>
+        <a class="banner-slide" href="<?= htmlspecialchars($b['enlace']) ?>">
+          <img src="/UrbanJ/<?= htmlspecialchars($b['imagen_url']) ?>"
+               alt="<?= htmlspecialchars($b['texto_alt']) ?>">
+        </a>
+      <?php endforeach; ?>
+    </div>
+  </section>
+
+  <!-- Sección: Gorras -->
+  <section class="home-section">
+    <h2>Gorras</h2>
+    <div class="productos-carousel">
+      <?php foreach ($gorras as $p): ?>
+        <div class="producto-slide">
+          <a class="prod-link" href="VisualizarProducto.php?id=<?= $p['id'] ?>">
+            <img src="/UrbanJ/<?= htmlspecialchars($p['img'] ?? 'assets/placeholder.png') ?>" alt="">
+            <h4><?= htmlspecialchars($p['nombre']) ?></h4>
+            <p class="precio">$<?= number_format($p['precio'], 2) ?></p>
+          </a>
+          <div class="acciones">
+            <button class="btn btn--primary btn--small" onclick="comprar(<?= $p['id'] ?>)">COMPRAR</button>
+            <button class="btn btn--secondary btn--small" onclick="addToCart(<?= $p['id'] ?>)">AÑADIR</button>
           </div>
-        <?php endforeach; ?>
-      </div>
-    </section>
-  <?php endforeach; ?>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  </section>
 
-</div>
+  <!-- Sección: Ropa -->
+  <section class="home-section">
+    <h2>Ropa</h2>
+    <div class="productos-carousel">
+      <?php foreach ($ropa as $p): ?>
+        <div class="producto-slide">
+          <a class="prod-link" href="VisualizarProducto.php?id=<?= $p['id'] ?>">
+            <img src="/UrbanJ/<?= htmlspecialchars($p['img'] ?? 'assets/placeholder.png') ?>" alt="">
+            <h4><?= htmlspecialchars($p['nombre']) ?></h4>
+            <p class="precio">$<?= number_format($p['precio'], 2) ?></p>
+          </a>
+          <div class="acciones">
+            <button class="btn btn--primary btn--small" onclick="comprar(<?= $p['id'] ?>)">COMPRAR</button>
+            <button class="btn btn--secondary btn--small" onclick="addToCart(<?= $p['id'] ?>)">AÑADIR</button>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  </section>
+
+  <!-- Sección: Tasas -->
+  <section class="home-section">
+    <h2>Tasas</h2>
+    <div class="productos-carousel">
+      <?php foreach ($tasas as $p): ?>
+        <div class="producto-slide">
+          <a class="prod-link" href="VisualizarProducto.php?id=<?= $p['id'] ?>">
+            <img src="/UrbanJ/<?= htmlspecialchars($p['img'] ?? 'assets/placeholder.png') ?>" alt="">
+            <h4><?= htmlspecialchars($p['nombre']) ?></h4>
+            <p class="precio">$<?= number_format($p['precio'], 2) ?></p>
+          </a>
+          <div class="acciones">
+            <button class="btn btn--primary btn--small" onclick="comprar(<?= $p['id'] ?>)">COMPRAR</button>
+            <button class="btn btn--secondary btn--small" onclick="addToCart(<?= $p['id'] ?>)">AÑADIR</button>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  </section>
+
+  <!-- Sección: Camisas -->
+  <section class="home-section">
+    <h2>Camisas</h2>
+    <div class="productos-carousel">
+      <?php foreach ($camisas as $p): ?>
+        <div class="producto-slide">
+          <a class="prod-link" href="VisualizarProducto.php?id=<?= $p['id'] ?>">
+            <img src="/UrbanJ/<?= htmlspecialchars($p['img'] ?? 'assets/placeholder.png') ?>" alt="">
+            <h4><?= htmlspecialchars($p['nombre']) ?></h4>
+            <p class="precio">$<?= number_format($p['precio'], 2) ?></p>
+          </a>
+          <div class="acciones">
+            <button class="btn btn--primary btn--small" onclick="comprar(<?= $p['id'] ?>)">COMPRAR</button>
+            <button class="btn btn--secondary btn--small" onclick="addToCart(<?= $p['id'] ?>)">AÑADIR</button>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  </section>
 
 </main>
-<?php require __DIR__ . '/includes/footer.php'; ?>
+
+<?php
+// Incluir pie de página
+require_once __DIR__ . '/includes/footer.php';
+?>
