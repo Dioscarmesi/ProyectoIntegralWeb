@@ -135,7 +135,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   <!-- Paso 3: Pagar -->
   <div class="step">
     <h2>3. Pagar</h2>
-    <button id="btn-pay" class="btn-pay">Ir a pasarela de pago</button>
+    <form action="procesar_compra.php" method="post">
+  <button type="submit" class="btn-pago">Ir a pasarela de pago</button>
+</form>
   </div>
 </main>
 

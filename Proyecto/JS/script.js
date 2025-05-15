@@ -1,5 +1,3 @@
-// /UrbanJ/js/script.js
-
 /**
  * Filtra las tarjetas de producto según el texto ingresado.
  */
@@ -9,7 +7,6 @@ function buscarProducto() {
   if (!filtro) return;
 
   document.querySelectorAll('.card, .producto-slide').forEach(el => {
-    // admitimos tanto .card (index/inventario) como .producto-slide (Home)
     const nameEl = el.querySelector('.card__name, h4');
     const nombre = nameEl ? nameEl.textContent.toLowerCase() : '';
     el.style.display = nombre.includes(filtro) ? '' : 'none';
@@ -32,4 +29,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Dropdowns del usuario y carrito (funciona en móviles también)
+  document.querySelectorAll('.nav__user .btn--icon, .nav__cart .btn--icon').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const dropdown = btn.nextElementSibling;
+      document.querySelectorAll('.nav__dropdown').forEach(d => {
+        if (d !== dropdown) d.classList.remove('open');
+      });
+      dropdown.classList.toggle('open');
+    });
+  });
+
+  // Cerrar dropdowns al hacer clic fuera
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.nav__dropdown').forEach(d => d.classList.remove('open'));
+  });
 });

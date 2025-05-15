@@ -1,142 +1,147 @@
 <?php
-// /UrbanJ/includes/header.php
-
-// Iniciar o reanudar sesión
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Conexión a la base de datos
-require_once __DIR__ . '/conexion.php';
+require_once __DIR__ . '/../conexion.php';
 
-/**
- * Obtiene el carrito desde la sesión y devuelve
- * los ítems, la cantidad total y el costo total.
- */
-function getCartData(PDO $pdo): array {
-    $cart = $_SESSION['cart'] ?? [];
-    $items = [];
-    $totalQty = 0;
-    $totalCost = 0.0;
+$is_admin = false;
+$cart = $_SESSION['cart'] ?? [];
+$totalQty = array_sum($cart);
+$user = null;
 
-    if (!empty($cart)) {
-        $ids = array_keys($cart);
-        $in  = str_repeat('?,', count($ids) - 1) . '?';
-        $stmt = $pdo->prepare("SELECT id, nombre, precio FROM productos WHERE id IN ($in)");
-        $stmt->execute($ids);
-
-        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $p) {
-            $qty = $cart[$p['id']] ?? 0;
-            if ($qty > 0) {
-                $cost = $p['precio'] * $qty;
-                $items[] = [
-                    'id'     => $p['id'],
-                    'nombre' => $p['nombre'],
-                    'qty'    => $qty,
-                    'cost'   => $cost
-                ];
-                $totalQty  += $qty;
-                $totalCost += $cost;
-            }
-        }
-    }
-
-    return ['items' => $items, 'totalQty' => $totalQty, 'totalCost' => $totalCost];
+if (isset($_SESSION['user_id'])) {
+    $stmt = $pdo->prepare("SELECT id, usuario, admin FROM usuarios WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $is_admin = $user && $user['admin'] == 1;
 }
-
-$cartData = getCartData($pdo);
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= htmlspecialchars($pageTitle ?? 'UrbanJ') ?></title>
-
-  <?php
-    // Incluimos aquí todos los CSS/JS globales y por página
-    require __DIR__ . '/Stylos.php';
-  ?>
+    <meta charset="UTF-8">
+    <title>UrbanJ</title>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php include_once __DIR__ . '/stylos.php'; ?>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav container">
-      <a href="/UrbanJ/index.php" class="nav__logo">UrbanJ</a>
+<header>
+    <nav class="nav-bar">
+        <!-- Marca -->
+        <div class="nav-brand">UrbanJ</div>
 
-      <ul class="nav__links">
-        <li><a href="/UrbanJ/gorras.php">Gorras</a></li>
-        <li><a href="/UrbanJ/ropa.php">Ropa</a></li>
-        <li><a href="/UrbanJ/novedades.php">Novedades</a></li>
-        <li><a href="/UrbanJ/acerca_de_nosotros.php">Acerca de Nosotros</a></li>
-        <?php if (!empty($_SESSION['admin'])): ?>
-          <li><a href="/UrbanJ/inventario.php">Inventario</a></li>
-        <?php endif; ?>
-      </ul>
-
-      <div class="nav__actions">
-        <div class="search-container">
-          <input type="text" id="search-box" placeholder="Buscar productos…">
-          <button onclick="buscarProducto()">Buscar</button>
-        </div>
-
-        <div class="nav__user">
-          <button class="btn--icon">👤</button>
-          <div class="nav__dropdown">
-            <?php if (!empty($_SESSION['user_id'])): ?>
-              <a href="/UrbanJ/SesionIniciada.php">Mi cuenta</a>
-              <a href="/UrbanJ/logout.php">Cerrar sesión</a>
+        <!-- Enlaces de navegación -->
+        <ul class="nav-links">
+            <?php if ($is_admin): ?>
+                <li><a href="/UrbanJ/gestionar_pedidos.php">Gestionar Pedidos</a></li>
+                <li><a href="/UrbanJ/inventario.php">Inventarios</a></li>
+                <li><a href="/UrbanJ/gestionar_usuarios.php">Gestionar Usuarios</a></li>
+                <li><a href="/UrbanJ/moderar_resenas.php">Moderación de Reseñas</a></li>
+                <li><a href="/UrbanJ/admin_banners.php">Banners</a></li>
             <?php else: ?>
-              <a href="/UrbanJ/login.php">Iniciar sesión</a>
-              <a href="/UrbanJ/RegistrarUsuario.php">Registrarse</a>
+                <li><a href="/UrbanJ/index.php">Inicio</a></li>
+                <li><a href="/UrbanJ/tienda.php">Tienda</a></li>
+                <li><a href="/UrbanJ/mi_cuenta.php">Mi Cuenta</a></li>
+                <li><a href="/UrbanJ/acerca_de_nosotros.php">Acerca de Nosotros</a></li>
             <?php endif; ?>
-          </div>
-        </div>
+        </ul>
 
-        <div class="nav__cart">
-          <button id="cart-btn" class="btn--icon" aria-label="Carrito">
-            🛒<span class="nav__badge"><?= $cartData['totalQty'] ?></span>
-          </button>
-          <div id="cart-dropdown" class="cart-dropdown">
-            <?php if (empty($cartData['items'])): ?>
-              <p class="empty">Tu carrito está vacío.</p>
+        <!-- Iconos a la derecha -->
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <!-- Carrito -->
+            <div class="cart-icon" onclick="toggleCartDropdown()">
+                🛒
+                <?php if ($totalQty > 0): ?>
+                    <span class="cart-count"><?= $totalQty ?></span>
+                <?php endif; ?>
+            </div>
+
+            <!-- Mi cuenta o Login/Registro -->
+            <?php if (isset($_SESSION['user_id']) && $user): ?>
+                <div class="account-menu">
+                    <button onclick="toggleAccountMenu()">Mi cuenta ⌄</button>
+                    <div id="account-dropdown" class="account-dropdown">
+                        <p><strong><?= htmlspecialchars($user['usuario']) ?></strong></p>
+                        <p>Rol: <?= $is_admin ? 'Administrador' : 'Cliente' ?></p>
+                        <a href="/UrbanJ/logout.php" class="btn-logout">Cerrar sesión</a>
+                    </div>
+                </div>
             <?php else: ?>
-              <ul class="cart-items">
-                <?php foreach ($cartData['items'] as $it): ?>
-                  <li>
-                    <span class="ci-name"><?= htmlspecialchars($it['nombre']) ?></span>
-                    <span class="ci-qty">x<?= $it['qty'] ?></span>
-                    <span class="ci-cost">$<?= number_format($it['cost'],2) ?></span>
-                  </li>
-                <?php endforeach; ?>
-              </ul>
-              <div class="cart-total">Total: $<?= number_format($cartData['totalCost'],2) ?></div>
-              <a href="/UrbanJ/carrito.php" class="btn btn--primary btn--small">Ver Carrito</a>
+                <div class="account-menu">
+                    <a href="/UrbanJ/login.php" class="btn btn--small">Iniciar sesión</a>
+                    <a href="/UrbanJ/RegistrarUsuario.php" class="btn btn--secondary btn--small">Registrarse</a>
+                </div>
             <?php endif; ?>
-          </div>
         </div>
 
-        <button class="nav__toggle btn--icon">☰</button>
-      </div>
+        <!-- Dropdown del carrito -->
+        <div id="cart-dropdown" class="cart-dropdown">
+            <h4 style="margin-top: 0">Tu carrito</h4>
+            <ul class="cart-items">
+                <?php
+                $totalCost = 0;
+                if (!empty($cart)) {
+                    $ids = array_keys($cart);
+                    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+                    $stmt = $pdo->prepare("SELECT id, nombre, precio FROM productos WHERE id IN ($placeholders)");
+                    $stmt->execute($ids);
+
+                    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $p) {
+                        $qty = $cart[$p['id']];
+                        $cost = $p['precio'] * $qty;
+                        $totalCost += $cost;
+                        echo '<li class="ci-item">';
+                        echo '<div class="ci-left">';
+                        echo '<img class="ci-thumb" src="/UrbanJ/assets/placeholder.png" alt="">';
+                        echo '<div>';
+                        echo '<div class="ci-name">' . htmlspecialchars($p['nombre']) . '</div>';
+                        echo '<div class="ci-qty">Cantidad: ' . $qty . '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '<div class="ci-right">';
+                        echo '<div class="ci-cost">$' . number_format($cost, 2) . '</div>';
+                        echo '</div>';
+                        echo '</li>';
+                    }
+                } else {
+                    echo '<p>No hay productos en el carrito.</p>';
+                }
+                ?>
+            </ul>
+
+            <?php if ($totalQty > 0): ?>
+                <div class="cart-total">Total: $<?= number_format($totalCost, 2) ?></div>
+                <a href="/UrbanJ/carrito.php" class="btn btn--checkout">Ver carrito</a>
+            <?php endif; ?>
+        </div>
     </nav>
+</header>
 
-    <div class="nav__mobile-menu">
-      <ul>
-        <li><a href="/UrbanJ/gorras.php">Gorras</a></li>
-        <li><a href="/UrbanJ/ropa.php">Ropa</a></li>
-        <li><a href="/UrbanJ/novedades.php">Novedades</a></li>
-        <li><a href="/UrbanJ/acerca_de_nosotros.php">Acerca de Nosotros</a></li>
-        <?php if (!empty($_SESSION['admin'])): ?>
-          <li><a href="/UrbanJ/inventario.php">Inventario</a></li>
-        <?php endif; ?>
-        <?php if (!empty($_SESSION['user_id'])): ?>
-          <li><a href="/UrbanJ/SesionIniciada.php">Mi cuenta</a></li>
-          <li><a href="/UrbanJ/logout.php">Cerrar sesión</a></li>
-        <?php else: ?>
-          <li><a href="/UrbanJ/login.php">Iniciar sesión</a></li>
-          <li><a href="/UrbanJ/RegistrarUsuario.php">Registrarse</a></li>
-        <?php endif; ?>
-      </ul>
-    </div>
-  </header>
+<script>
+function toggleCartDropdown() {
+    const dropdown = document.getElementById('cart-dropdown');
+    dropdown.classList.toggle('open');
+}
 
-  <main class="container">
+function toggleAccountMenu() {
+    const menu = document.getElementById('account-dropdown');
+    menu.classList.toggle('show');
+}
+
+document.addEventListener('click', function(event) {
+    const cartIcon = document.querySelector('.cart-icon');
+    const cartDropdown = document.getElementById('cart-dropdown');
+    if (!cartDropdown.contains(event.target) && !cartIcon.contains(event.target)) {
+        cartDropdown.classList.remove('open');
+    }
+
+    const accountBtn = document.querySelector('.account-menu button');
+    const accountDropdown = document.getElementById('account-dropdown');
+    if (accountDropdown && !accountDropdown.contains(event.target) && !accountBtn.contains(event.target)) {
+        accountDropdown.classList.remove('show');
+    }
+});
+</script>

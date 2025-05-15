@@ -1,0 +1,25 @@
+.container {
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tabla-usuarios {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-usuarios th, .tabla-usuarios td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+button {
+    padding: 6px 12px;
+    margin: 0 2px;
+    cursor: pointer;
+}

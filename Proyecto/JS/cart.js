@@ -1,18 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Remover item
+  // Remover item desde carrito
   document.querySelectorAll('.btn-remove').forEach(btn => {
     btn.addEventListener('click', async e => {
       const tr = e.target.closest('tr');
       const productId = tr.dataset.id;
       await postJSON('api/cart_remove.php', { id: productId });
-      // refrescar fila o recargar página
       tr.remove();
       recalcTotal();
       updateHeaderCart(); 
     });
   });
 
-  // Cambiar cantidad
+  // Cambiar cantidad en carrito
   document.querySelectorAll('.cart-qty').forEach(input => {
     input.addEventListener('change', async e => {
       let qty = parseInt(e.target.value);
@@ -21,16 +20,47 @@ document.addEventListener('DOMContentLoaded', () => {
       const tr = e.target.closest('tr');
       const productId = tr.dataset.id;
       const res = await postJSON('api/cart_add.php', { id: productId, qty });
-      // actualizar subtotal y header badge
       const price = parseFloat(tr.querySelector('td:nth-child(2)').textContent.replace('$',''));
-      tr.querySelector('.cart-sub').textContent = '$' + (price*qty).toFixed(2);
+      tr.querySelector('.cart-sub').textContent = '$' + (price * qty).toFixed(2);
       recalcTotal();
       updateHeaderCart();
     });
   });
+
+  // Añadir al carrito desde tienda con SweetAlert2
+  document.querySelectorAll('.form-add-cart').forEach(form => {
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const productId = form.dataset.id;
+
+      const res = await postJSON('api/cart_add.php', {
+        id: parseInt(productId),
+        qty: 1
+      });
+
+      if (res.success) {
+        Swal.fire({
+          toast: true,
+          icon: 'success',
+          title: 'Producto añadido al carrito',
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true
+        });
+        updateHeaderCart(res.totalQty);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Hubo un error al añadir el producto.'
+        });
+      }
+    });
+  });
 });
 
-// Helper para recalcular total en el pie
+// Recalcula el total del carrito
 function recalcTotal() {
   let sum = 0;
   document.querySelectorAll('.cart-sub').forEach(td => {
@@ -39,17 +69,22 @@ function recalcTotal() {
   document.getElementById('cart-total').textContent = sum.toFixed(2);
 }
 
-// Header badge
-async function updateHeaderCart() {
-  const res = await postJSON('api/cart_add.php', {id:0, qty:0}); // devuelve { totalQty }
+// Actualiza el badge del carrito en el header
+async function updateHeaderCart(qty = null) {
+  if (qty !== null) {
+    document.querySelectorAll('.nav__badge').forEach(b => b.textContent = qty);
+    return;
+  }
+
+  const res = await postJSON('api/cart_add.php', { id: 0, qty: 0 }); // Dummy
   document.querySelectorAll('.nav__badge').forEach(b => b.textContent = res.totalQty);
 }
 
-// Llamada genérica
+// Enviar JSON por POST
 async function postJSON(url, data) {
   const r = await fetch(url, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   });
   return r.json();

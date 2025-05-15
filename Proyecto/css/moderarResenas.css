@@ -1,0 +1,26 @@
+.container {
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tabla-resenas {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-resenas th,
+.tabla-resenas td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+button {
+    padding: 6px 12px;
+    margin: 2px;
+    cursor: pointer;
+}

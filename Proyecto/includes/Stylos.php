@@ -1,17 +1,21 @@
 <?php
-// /UrbanJ/includes/Stylos.php
+// /UrbanJ/includes/stylos.php
 
-// Determinar la página actual
-$current = basename($_SERVER['PHP_SELF']); // e.g. "index.php", "carrito.php", "checkout.php", etc.
+$current = basename($_SERVER['PHP_SELF']);
 
-// 1) Estilos globales
+// Estilos globales
 echo '<link rel="stylesheet" href="/UrbanJ/css/styles.css">' . "\n";
-
-// 2) Mini-carrito (dropdown)
+echo '<link rel="stylesheet" href="/UrbanJ/css/nav.css">' . "\n";
 echo '<link rel="stylesheet" href="/UrbanJ/css/cart-dropdown.css">' . "\n";
 
-// 3) Estilos por página
+// Estilos por página
 switch ($current) {
+    case 'gestionar_pedidos.php':
+    case 'ver_pedido.php':
+    case 'editar_estado.php':
+        echo '<link rel="stylesheet" href="/UrbanJ/css/consultaPedidos.css">' . "\n";
+        break;
+
     case 'index.php':
         echo '<link rel="stylesheet" href="/UrbanJ/css/Home.css">' . "\n";
         break;
@@ -44,13 +48,21 @@ switch ($current) {
     case 'EditarProducto.php':
         echo '<link rel="stylesheet" href="/UrbanJ/css/EditarProducto.css">' . "\n";
         break;
+
+    // ✅ NUEVA ENTRADA PARA gestionar_usuarios.php
+    case 'gestionar_usuarios.php':
+        echo '<link rel="stylesheet" href="/UrbanJ/css/gestionarUsuarios.css">' . "\n";
+        break;
+    case 'moderar_resenas.php':
+    echo '<link rel="stylesheet" href="/UrbanJ/css/moderarResenas.css">' . "\n";
+    break;
 }
 
-// 4) Scripts globales
+// Scripts globales
 echo '<script defer src="/UrbanJ/js/script.js"></script>' . "\n";
 echo '<script defer src="/UrbanJ/js/cart.js"></script>' . "\n";
 
-// 5) Scripts por página
+// Scripts por página
 switch ($current) {
     case 'index.php':
         echo '<script defer src="/UrbanJ/js/Home.js"></script>' . "\n";
@@ -80,4 +92,9 @@ switch ($current) {
     case 'RegistrarUsuario.php':
         echo '<script defer src="/UrbanJ/js/LoginRegister.js"></script>' . "\n";
         break;
+        case 'tienda.php':
+    echo '<link rel="stylesheet" href="/UrbanJ/css/Tienda.css">' . "\n";
+    break;
+
 }
+?>

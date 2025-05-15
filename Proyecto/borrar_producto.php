@@ -1,40 +1,30 @@
 <?php
-include('conexion.php');
+session_start();
+require_once __DIR__ . '/includes/conexion.php';
 
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-
-    // Primero, eliminamos las imágenes asociadas al producto
-    $sql_imagenes = "SELECT imagen FROM imagenes_productos WHERE producto_id = ?";
-    $stmt_imagenes = $conn->prepare($sql_imagenes);
-    $stmt_imagenes->bind_param("i", $id);
-    $stmt_imagenes->execute();
-    $result_imagenes = $stmt_imagenes->get_result();
-
-    while ($img = $result_imagenes->fetch_assoc()) {
-        // Eliminar imagen del servidor
-        unlink($img['imagen']);
-    }
-
-    // Eliminar las imágenes de la base de datos
-    $sql_delete_imagenes = "DELETE FROM imagenes_productos WHERE producto_id = ?";
-    $stmt_delete_imagenes = $conn->prepare($sql_delete_imagenes);
-    $stmt_delete_imagenes->bind_param("i", $id);
-    $stmt_delete_imagenes->execute();
-
-    // Ahora eliminamos el producto
-    $sql_delete_producto = "DELETE FROM productos WHERE id = ?";
-    $stmt_delete_producto = $conn->prepare($sql_delete_producto);
-    $stmt_delete_producto->bind_param("i", $id);
-
-    if ($stmt_delete_producto->execute()) {
-        echo "Producto y sus imágenes han sido eliminados con éxito.";
-    } else {
-        echo "Error al eliminar el producto: " . $stmt_delete_producto->error;
-    }
-} else {
+if (!isset($_GET['id'])) {
     echo "Producto no encontrado.";
+    exit;
 }
 
-$conn->close();
+$id = intval($_GET['id']);
+
+// Eliminar imágenes asociadas
+$imagenes = $pdo->prepare("SELECT imagen_url FROM imagenes_producto WHERE producto_id = ?");
+$imagenes->execute([$id]);
+foreach ($imagenes->fetchAll(PDO::FETCH_COLUMN) as $img) {
+    @unlink(__DIR__ . '/' . $img);
+}
+
+// Borrar imágenes de la base de datos
+$pdo->prepare("DELETE FROM imagenes_producto WHERE producto_id = ?")->execute([$id]);
+
+// Borrar el producto
+$stmt = $pdo->prepare("DELETE FROM productos WHERE id = ?");
+if ($stmt->execute([$id])) {
+    header('Location: inventario.php');
+    exit;
+} else {
+    echo "Error al eliminar el producto.";
+}
 ?>

@@ -1,82 +1,178 @@
-/* /UrbanJ/css/Home.css */
-
-/* Contenedor principal */
+/* Contenedor principal del resto del sitio */
 .home-container {
   margin-top: 1rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1rem;
 }
 
-/* Banner Carrusel */
-.home-banner {
+/* ===================================
+   🔹 Carrusel Full Width con Owl
+====================================== */
+.banner-fullscreen-wrapper {
+  position: relative;
+  width: 100%;
   margin-bottom: 2rem;
 }
-.carousel {
-  display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  gap: 1rem;
-}
-.carousel::-webkit-scrollbar {
-  display: none;
-}
-.banner-slide img {
+
+.banner-fullscreen {
   width: 100%;
-  border-radius: 8px;
-  object-fit: cover;
 }
 
-/* Secciones de Productos */
+.banner-fullscreen .item img {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  display: block;
+}
+
+.banner-item {
+  position: relative;
+  display: block;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.banner-caption {
+  position: absolute;
+  bottom: 30px;
+  left: 40px;
+  color: white;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  max-width: 60%;
+}
+
+.banner-caption h2 {
+  font-size: 2rem;
+  font-family: var(--font-heading, 'Oswald', sans-serif);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Flechas laterales */
+.manual-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+  color: white;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 6px;
+  z-index: 20;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.manual-nav:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.nav-left {
+  left: 30px;
+}
+
+.nav-right {
+  right: 30px;
+}
+
+/* ===================================
+   🔹 Secciones de productos
+====================================== */
 .home-section {
   margin-bottom: 3rem;
 }
+
 .home-section h2 {
-  font-family: var(--font-h);
+  font-family: var(--font-heading);
   font-size: 2rem;
   color: var(--accent);
   margin-bottom: 1rem;
 }
+
 .productos-carousel {
   display: flex;
   overflow-x: auto;
   gap: 1rem;
 }
+
 .productos-carousel::-webkit-scrollbar {
   display: none;
 }
-.producto-slide {
-  background: var(--section);
+
+.producto-urbanJ {
+  background: var(--section, #1a1a1a);
   border-radius: 8px;
   padding: 1rem;
   min-width: 180px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  height: 100%;
 }
+
 .prod-link {
   text-decoration: none;
   color: inherit;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
+
 .prod-link img {
   width: 100%;
-  height: 150px;
+  height: 200px;
   object-fit: cover;
+  object-position: center;
   border-radius: 4px;
+  background: #000;
 }
+
 .prod-link h4 {
   font-size: 1rem;
   margin: .5rem 0;
   font-weight: 500;
 }
+
 .prod-link .precio {
   color: var(--accent);
   font-weight: bold;
 }
 
-/* Botones en slides */
-.producto-slide .acciones {
+/* Calificación y etiquetas */
+.rating {
+  color: gold;
+  font-size: 0.9rem;
+}
+
+.review-count {
+  color: var(--muted, #bbb);
+  font-size: 0.85rem;
+  margin-left: 0.3rem;
+}
+
+.envio {
+  font-size: 0.85rem;
+  color: var(--muted, #bbb);
+}
+
+.precio {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+/* Botones */
+.producto-urbanJ .acciones {
   display: flex;
   gap: .5rem;
   margin-top: .5rem;
 }
+
 .btn--small {
   flex: 1;
   padding: .4rem .8rem;
@@ -88,7 +184,27 @@
   .productos-carousel {
     gap: .5rem;
   }
-  .producto-slide {
+
+  .producto-urbanJ {
     min-width: 140px;
+  }
+
+  .banner-caption {
+    bottom: 15px;
+    left: 20px;
+    max-width: 90%;
+    padding: 0.8rem 1rem;
+  }
+
+  .banner-caption h2 {
+    font-size: 1.2rem;
+  }
+
+  .nav-left {
+    left: 10px;
+  }
+
+  .nav-right {
+    right: 10px;
   }
 }
