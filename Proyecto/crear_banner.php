@@ -26,10 +26,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($imagen_url !== '') {
-        $stmt = $pdo->prepare("INSERT INTO banners (imagen_url, enlace, texto_alt, orden) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$imagen_url, $enlace, $texto_alt, $orden]);
-        header('Location: admin_banners.php');
-        exit;
+        $stmt = $pdo->query("SELECT MAX(id) as max_id FROM banners");
+        $lastBannerId = $stmt->fetch(PDO::FETCH_ASSOC)['max_id'] ?? 0;
+        $nuevoBannerId = $lastBannerId + 1;
+
+        $stmt = $pdo->prepare("
+            INSERT INTO banners (id, imagen_url, enlace, texto_alt, orden)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([$nuevoBannerId, $imagen_url, $enlace, $texto_alt, $orden]);
+
+        $_SESSION['success'] = "¡Banner creado correctamente!";
+        echo '<script>window.location.href = "admin_banners.php";</script>';
+    exit;
     }
 }
 ?>

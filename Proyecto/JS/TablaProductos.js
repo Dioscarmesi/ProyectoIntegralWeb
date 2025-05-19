@@ -1,19 +1,38 @@
-// /UrbanJ/js/TablaProductos.js
-
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Script cargado correctamente ✔️");
 
+  // Elementos del modal
   const modal = document.querySelector('.modal-overlay');
   const closeModal = document.getElementById('modal-close');
+  const modalContent = document.querySelector('.modal');
 
-  if (!modal || !closeModal) {
-    console.error("Modal o botón de cierre no encontrado");
+  if (!modal || !closeModal || !modalContent) {
+    console.error("Elementos del modal no encontrados");
     return;
   }
 
+  // Función para mostrar el modal con animación
+  function showModal() {
+    modal.style.display = 'flex';
+    setTimeout(() => {
+      modal.classList.add('active');
+      modalContent.classList.add('active');
+    }, 10);
+  }
+
+  // Función para ocultar el modal con animación
+  function hideModal() {
+    modal.classList.remove('active');
+    modalContent.classList.remove('active');
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 300);
+  }
+
+  // Eventos para los botones Ver
   document.querySelectorAll('.btn-view').forEach(button => {
     button.addEventListener('click', () => {
-      // Rellenar los datos del modal
+      // Mostrar datos básicos
       document.getElementById('modal-nombre').textContent = button.dataset.nombre;
       document.getElementById('modal-descripcion').textContent = button.dataset.descripcion;
       document.getElementById('modal-precio').textContent = button.dataset.precio;
@@ -22,35 +41,35 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('modal-creado').textContent = button.dataset.creado;
       document.getElementById('modal-actualizado').textContent = button.dataset.actualizado;
 
-      // Limpiar y agregar imágenes
-      const images = JSON.parse(button.dataset.imagenes || '[]');
-      const imageContainer = document.getElementById('modal-images');
-      imageContainer.innerHTML = '';
+      // Procesar imágenes
+      const imagesContainer = document.getElementById('modal-images');
+      imagesContainer.innerHTML = '';
+      
+      try {
+        const images = JSON.parse(button.dataset.imagenes || '[]');
+        
+        if (images.length > 0) {
+          images.forEach(img => {
+            const imgElement = document.createElement('img');
+            imgElement.src = img.startsWith('http') ? img : `/UrbanJ/${img}`;
+            imgElement.alt = button.dataset.nombre;
+            imgElement.loading = 'lazy';
+            imagesContainer.appendChild(imgElement);
+          });
+        } else {
+          imagesContainer.innerHTML = '<p class="no-images">No hay imágenes disponibles</p>';
+        }
+      } catch (error) {
+        console.error("Error al parsear imágenes:", error);
+        imagesContainer.innerHTML = '<p class="no-images">Error al cargar imágenes</p>';
+      }
 
-      images.forEach(img => {
-        const image = document.createElement('img');
-        image.src = '/UrbanJ/' + img;
-        image.alt = 'Producto';
-        image.style.width = '80px';
-        image.style.margin = '0.25rem';
-        image.style.borderRadius = '6px';
-        imageContainer.appendChild(image);
-      });
-
-      // Mostrar el modal
-      modal.classList.add('active');
+      showModal();
     });
   });
 
-  // Cerrar modal con la X
-  closeModal.addEventListener('click', () => {
-    modal.classList.remove('active');
-  });
-
-  // Cerrar modal al hacer clic fuera
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.classList.remove('active');
-    }
-  });
+  // Eventos para cerrar el modal
+  closeModal.addEventListener('click', hideModal);
+  modal.addEventListener('click', (e) => e.target === modal && hideModal());
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && hideModal());
 });

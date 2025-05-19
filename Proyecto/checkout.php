@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     <ul class="address-list" id="address-list">
       <?php foreach ($direcciones as $d): ?>
-        <li class="address-item">
+        <li class="address-item" data-id="<?= $d['id'] ?>">
           <span>
             <strong><?= htmlspecialchars($d['alias']) ?></strong> — 
             <?= htmlspecialchars($d['calle']) ?>, 
@@ -132,14 +132,112 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <div class="checkout-total">Total: $<?= number_format($totalCost,2) ?></div>
   </div>
 
-  <!-- Paso 3: Pagar -->
+  <!-- Paso 3: Pagar --> 
   <div class="step">
     <h2>3. Pagar</h2>
-    <form action="procesar_compra.php" method="post">
-  <button type="submit" class="btn-pago">Ir a pasarela de pago</button>
+    <button onclick="openPaymentPopup()" class="btn-pago">Ir a pasarela de pago</button>
+  </div>
 </form>
   </div>
 </main>
+<script>
+function openPaymentPopup() {
+    <?php if(empty($cartItems)): ?>
+        Swal.fire({
+            icon: 'error',
+            title: 'Carrito vacío',
+            text: 'No hay productos en tu carrito'
+        });
+        return;
+    <?php endif; ?>
+
+    // Verificar que hay dirección seleccionada (opcional)
+    // const selectedAddress = document.querySelector('.address-item.selected');
+    // if (!selectedAddress) {
+    //     Swal.fire({
+    //         icon: 'error',
+    //         title: 'Dirección requerida',
+    //         text: 'Por favor selecciona una dirección de envío'
+    //     });
+    //     return;
+    // }
+
+    const totalAmount = <?= $totalCost ?>;
+    const popupUrl = `/UrbanJ/Pasarela-urbanj.html?amount=${totalAmount}`;
+
+    // Solución alternativa si el popup está bloqueado
+    const popupWindow = window.open(popupUrl, 'PasarelaUrbanJ', 
+        'width=800,height=600,scrollbars=yes,resizable=yes');
+
+    if (!popupWindow || popupWindow.closed || typeof popupWindow.closed === 'undefined') {
+        // Popup bloqueado - ofrecer alternativa
+        Swal.fire({
+            title: 'Redirección a pasarela de pago',
+            text: 'El navegador bloqueó la ventana emergente. ¿Deseas ser redirigido ahora?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, redirigir',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Abrir en la misma ventana
+                window.location.href = popupUrl;
+            }
+        });
+        return;
+    }
+
+    // Manejar mensajes del popup
+    window.addEventListener('message', function(event) {
+        if (event.origin !== window.location.origin) return;
+        
+        if (event.data.paymentStatus === 'completed') {
+            handleSuccessfulPayment(event.data);
+        } else if (event.data.paymentStatus === 'cancelled') {
+            Swal.fire('Pago cancelado', 'El pago fue cancelado', 'info');
+        } else if (event.data.paymentStatus === 'error') {
+            Swal.fire('Error en el pago', 'Ocurrió un error al procesar el pago', 'error');
+        }
+    });
+
+    // Función para manejar pago exitoso
+    async function handleSuccessfulPayment(paymentData) {
+        try {
+            const response = await fetch('procesar_pedido.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    transaction_id: paymentData.transactionId,
+                    amount: paymentData.amount,
+                    // direccion_id: selectedAddress ? selectedAddress.dataset.id : null
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Pedido completado!',
+                    html: `Número de pedido: <b>${result.pedido_id}</b><br>
+                           Transacción ID: <b>${paymentData.transactionId}</b>`,
+                    confirmButtonText: 'Ver mi pedido'
+                }).then(() => {
+                    window.location.href = 'mis_pedidos.php';
+                });
+            } else {
+                throw new Error(result.message || 'Error al registrar el pedido');
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al procesar pedido',
+                text: error.message
+            });
+        }
+    }
+}
+</script>
 
 <?php
 require_once __DIR__ . '/includes/footer.php';

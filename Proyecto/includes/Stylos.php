@@ -33,7 +33,7 @@ switch ($current) {
         break;
 
     case 'checkout.php':
-        echo '<link rel="stylesheet" href="/UrbanJ/css/Checkout.css">' . "\n";
+        echo '<link rel="stylesheet" href="/UrbanJ/css/checkout.css">' . "\n";
         break;
 
     case 'login.php':
@@ -64,10 +64,6 @@ echo '<script defer src="/UrbanJ/js/cart.js"></script>' . "\n";
 
 // Scripts por página
 switch ($current) {
-    case 'index.php':
-        echo '<script defer src="/UrbanJ/js/Home.js"></script>' . "\n";
-        break;
-
     case 'inventario.php':
         echo '<script defer src="/UrbanJ/js/TablaProductos.js"></script>' . "\n";
         break;

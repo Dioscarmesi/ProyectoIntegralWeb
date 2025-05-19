@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateHeaderCart();
     });
   });
-
+  
   // Añadir al carrito desde tienda con SweetAlert2
   document.querySelectorAll('.form-add-cart').forEach(form => {
     form.addEventListener('submit', async e => {
@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         id: parseInt(productId),
         qty: 1
       });
-
       if (res.success) {
         Swal.fire({
           toast: true,

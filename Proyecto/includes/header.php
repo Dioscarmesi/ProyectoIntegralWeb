@@ -26,6 +26,65 @@ if (isset($_SESSION['user_id'])) {
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <?php include_once __DIR__ . '/stylos.php'; ?>
+    <style>
+        .cart-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            width: 350px;
+            background: black;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 1rem;
+            display: none;
+            z-index: 1000;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .cart-dropdown.open {
+            display: block;
+        }
+        
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 0.5rem;
+        }
+        
+        .cart-count {
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+        
+        .ci-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+        
+        .btn-remove {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 <header>
@@ -94,6 +153,7 @@ if (isset($_SESSION['user_id'])) {
                         $cost = $p['precio'] * $qty;
                         $totalCost += $cost;
                         echo '<li class="ci-item">';
+                        echo '<button class="btn-remove" onclick="removeFromCart('.$p['id'].')">×</button>';
                         echo '<div class="ci-left">';
                         echo '<img class="ci-thumb" src="/UrbanJ/assets/placeholder.png" alt="">';
                         echo '<div>';
@@ -121,27 +181,76 @@ if (isset($_SESSION['user_id'])) {
 </header>
 
 <script>
+// Funciones mejoradas para el carrito
 function toggleCartDropdown() {
     const dropdown = document.getElementById('cart-dropdown');
     dropdown.classList.toggle('open');
 }
 
-function toggleAccountMenu() {
-    const menu = document.getElementById('account-dropdown');
-    menu.classList.toggle('show');
+async function addToCart(productId, quantity = 1) {
+    try {
+        const response = await fetch('/UrbanJ/api/cart_add.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({id: productId, qty: quantity})
+        });
+        const result = await response.json();
+        
+        updateCartCount(result.totalQty);
+        Swal.fire('¡Producto añadido!', '', 'success');
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
+async function removeFromCart(productId) {
+    try {
+        const response = await fetch('/UrbanJ/api/cart_remove.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({id: productId})
+        });
+        const result = await response.json();
+        
+        updateCartCount(result.totalQty);
+        // Recargar el dropdown del carrito
+        location.reload();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+function updateCartCount(count) {
+    const cartCount = document.querySelector('.cart-count');
+    if (count > 0) {
+        if (!cartCount) {
+            const cartIcon = document.querySelector('.cart-icon');
+            const countSpan = document.createElement('span');
+            countSpan.className = 'cart-count';
+            countSpan.textContent = count;
+            cartIcon.appendChild(countSpan);
+        } else {
+            cartCount.textContent = count;
+        }
+    } else if (cartCount) {
+        cartCount.remove();
+    }
+}
+
+// Cerrar dropdowns al hacer clic fuera
 document.addEventListener('click', function(event) {
     const cartIcon = document.querySelector('.cart-icon');
     const cartDropdown = document.getElementById('cart-dropdown');
     if (!cartDropdown.contains(event.target) && !cartIcon.contains(event.target)) {
         cartDropdown.classList.remove('open');
     }
-
-    const accountBtn = document.querySelector('.account-menu button');
-    const accountDropdown = document.getElementById('account-dropdown');
-    if (accountDropdown && !accountDropdown.contains(event.target) && !accountBtn.contains(event.target)) {
-        accountDropdown.classList.remove('show');
-    }
 });
+function toggleAccountMenu() {
+    const menu = document.getElementById('account-dropdown');
+    menu.classList.toggle('show');
+}
 </script>

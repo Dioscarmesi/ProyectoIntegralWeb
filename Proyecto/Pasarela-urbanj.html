@@ -42,15 +42,30 @@
       border-radius: 20px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     }
+
+    .amount-display {
+      font-size: 1.5rem;
+      margin: 20px 0;
+      color: #00c6ff;
+    }
   </style>
 </head>
 <body>
   <div class="box">
     <h2><span style="color:#00c6ff;">UrbanJ</span></h2>
+    <div class="amount-display" id="amount-display">Total: $0.00 MXN</div>
     <div id="paypal-button-container"></div>
   </div>
 
   <script>
+    // Obtener el monto del parámetro de URL
+    const urlParams = new URLSearchParams(window.location.search);
+    let amount = urlParams.get('amount') || '0';
+    
+    // Validar y formatear el monto
+    amount = parseFloat(amount).toFixed(2);
+    document.getElementById('amount-display').textContent = `Total: $${amount} MXN`;
+
     paypal.Buttons({
       style: {
         color: 'blue',
@@ -61,27 +76,35 @@
         return actions.order.create({
           purchase_units: [{
             amount: {
-              value: '100' // Monto en MXN
+              value: amount // Usamos el monto dinámico
             }
           }]
         });
       },
       onApprove: function(data, actions) {
         return actions.order.capture().then(function(details) {
+          // Notificar a la ventana padre sobre el pago exitoso
+          window.opener.postMessage({ 
+            paymentStatus: 'completed', 
+            transactionId: details.id,
+            amount: amount
+          }, '*');
+          
+          // Mostrar confirmación y cerrar
           alert('Gracias por tu compra, ' + details.payer.name.given_name + '!');
+          window.close();
         });
       },
       onCancel: function(data) {
+        window.opener.postMessage({ paymentStatus: 'cancelled' }, '*');
         alert("Pago cancelado");
       },
       onError: function(err) {
         console.error("Error con PayPal:", err);
+        window.opener.postMessage({ paymentStatus: 'error', error: err }, '*');
         alert("Hubo un error al procesar el pago");
       }
     }).render('#paypal-button-container');
   </script>
 </body>
 </html>
-
-
-  

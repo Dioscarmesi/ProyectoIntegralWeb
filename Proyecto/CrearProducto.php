@@ -29,12 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 2) Si no hay errores, insertamos
     if (empty($errors)) {
-        $stmt = $pdo->prepare("
+        $stmt = $pdo->query("SELECT MAX(id) as max_id FROM productos");
+      $lastProductoId = $stmt->fetch(PDO::FETCH_ASSOC)['max_id'] ?? 0;
+      $nuevoProductoId = $lastProductoId + 1;
+
+      $stmt = $pdo->prepare("
           INSERT INTO productos
-            (nombre, descripcion, precio, categoria, stock)
-          VALUES (?, ?, ?, ?, ?)
-        ");
-        $stmt->execute([$nombre, $descripcion, $precio, $categoria, $stock]);
+              (id, nombre, descripcion, precio, categoria, stock, ventas, creado_at, actualizado_at, rating)
+          VALUES (? ,?, ?, ?, ?, ?,0, NOW(), NOW(), 0)
+      ");
+      $stmt->execute([$nuevoProductoId, $nombre, $descripcion, $precio, $categoria, $stock]);
         $producto_id = $pdo->lastInsertId();
 
         // 3) Procesar imágenes
